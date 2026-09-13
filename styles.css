@@ -33,10 +33,27 @@ body {
   background: var(--bg-deep);
   color: var(--ivory);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
   font-size: 15px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+}
+
+html:not(.i18n-ready) .phone {
+  opacity: 0;
+}
+
+html.i18n-ready .phone {
+  opacity: 1;
+}
+
+html[lang="en"] .serif {
+  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+}
+
+html[lang="ru"] .serif,
+html[lang="kk"] .serif {
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 body {
@@ -84,20 +101,42 @@ button {
   font-family: "Songti SC", "STSong", "SimSun", "PMingLiU", "Times New Roman", serif;
 }
 
-.nav {
+.sticky-head {
   position: sticky;
   top: 0;
   z-index: 20;
-  display: flex;
-  gap: 4px;
-  padding: 10px 12px 10px;
-  margin-bottom: -52px;
-  overflow-x: auto;
-  scrollbar-width: none;
+  margin-bottom: -86px;
   background: rgba(11, 18, 32, 0.78);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(196, 165, 116, 0.12);
+}
+
+.langs {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 8px 14px 0;
+}
+
+.langs a {
+  padding: 3px 8px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--faint);
+}
+
+.langs a.on,
+.langs a:hover {
+  color: var(--gold-2);
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+  padding: 6px 12px 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .nav::-webkit-scrollbar {
@@ -129,7 +168,7 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 64px 0 28px;
+  padding: 96px 0 28px;
 }
 
 .hero-bg {

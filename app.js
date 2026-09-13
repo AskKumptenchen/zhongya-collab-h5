@@ -1,16 +1,59 @@
 (function () {
-  var notes = {
-    far: "容积率：地上总建筑面积 ÷ 用地面积。洽谈阶段常和限高、绿地率一起谈，直接决定能盖多少。",
-    area: "建筑面积：按当地规范计量的房屋面积，影响造价、销售和报建口径，不能和占地面积混用。",
-    land: "土地使用权：谁有权在这块地上开发、用多久、能否抵押或转让，合同里必须写清。",
-    red: "规划红线：地块不可越界的控制线。红线图没确认，后面设计和报建都会停。",
-    epc: "EPC 是工程总承包：设计、采购、施工由一方统筹，避免三家各干各的对不上。",
-    share: "投资比例：各方出多少钱、占多少权益。例如决策 #008：中方 55%，中亚方 45%。",
-    jv: "股权合作：双方成立合资公司持股做项目，和纯承包、代建不是同一种模式。",
-    permit: "项目审批：土地、规划、建设许可等政府手续。驾驶舱里的延期，经常卡在这一环。",
-    presale: "预售：未竣工先售。各地监管差很大，政策文件要用文件助手对照当前地块。",
-    accept: "竣工验收：工程按许可和规范验收通过，才能交付和结算。"
-  };
+  var codes = { zh: "zh-CN", en: "en", ru: "ru", kk: "kk" };
+
+  function detectLang() {
+    var q = new URLSearchParams(location.search).get("lang");
+    if (q && window.I18N[q]) return q;
+
+    var file = (location.pathname.split("/").pop() || "").toLowerCase();
+    if (file === "en.html") return "en";
+    if (file === "ru.html") return "ru";
+    if (file === "kk.html") return "kk";
+
+    var path = location.pathname.replace(/\/+$/, "").toLowerCase();
+    if (path.endsWith("/en")) return "en";
+    if (path.endsWith("/ru")) return "ru";
+    if (path.endsWith("/kk")) return "kk";
+
+    var marked = document.documentElement.getAttribute("data-lang");
+    if (marked && window.I18N[marked]) return marked;
+    return "zh";
+  }
+
+  function t(lang, key) {
+    var pack = (window.I18N && window.I18N[lang]) || {};
+    if (pack[key] != null) return pack[key];
+    if (window.I18N && window.I18N.zh && window.I18N.zh[key] != null) return window.I18N.zh[key];
+    return "";
+  }
+
+  function apply(lang) {
+    document.documentElement.lang = codes[lang] || "zh-CN";
+    document.documentElement.setAttribute("data-lang", lang);
+    document.title = t(lang, "doc.title");
+
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      el.textContent = t(lang, el.getAttribute("data-i18n"));
+    });
+    document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+      el.innerHTML = t(lang, el.getAttribute("data-i18n-html"));
+    });
+    document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
+      el.setAttribute("aria-label", t(lang, el.getAttribute("data-i18n-aria")));
+    });
+    document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
+      el.setAttribute("alt", t(lang, el.getAttribute("data-i18n-alt")));
+    });
+
+    document.querySelectorAll(".langs a").forEach(function (a) {
+      a.classList.toggle("on", a.getAttribute("data-go") === lang);
+    });
+
+    document.documentElement.classList.add("i18n-ready");
+  }
+
+  var lang = detectLang();
+  apply(lang);
 
   var noteEl = document.getElementById("term-note");
   var terms = document.querySelectorAll(".term");
@@ -22,7 +65,7 @@
       });
       btn.classList.add("on");
       if (noteEl) {
-        noteEl.textContent = notes[btn.getAttribute("data-term")] || "";
+        noteEl.textContent = t(lang, "note." + btn.getAttribute("data-term"));
         noteEl.classList.add("show");
       }
     });
@@ -34,7 +77,7 @@
   });
 
   function setActive() {
-    var y = window.scrollY + 96;
+    var y = window.scrollY + 120;
     var current = ids[0];
     ids.forEach(function (id) {
       var el = document.getElementById(id);
